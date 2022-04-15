@@ -6,6 +6,7 @@ class Ball {
   boolean visible;
   
   
+  
   /// TYPES ///
   // 1: Only goes for your ball.
   // 2. Goes towards nearest ball.
@@ -15,6 +16,7 @@ class Ball {
   PVector position;
   PVector speed;
   PVector acceleration;
+  PVector nearestBall; // position of
   
   Ball(int _aiType, float _x, float _y) {
     aiType = _aiType;
@@ -22,6 +24,7 @@ class Ball {
     speed = new PVector(0, 0);
     acceleration = new PVector(0,0);
     visible = true;
+    
   }
   
   void run() {
@@ -51,9 +54,9 @@ class Ball {
   }
   
   void changeSpeed(PVector ballToTarget) {
-    if (aiType == 1) {
+    if (aiType == 0) {
+    } else if (aiType == 1) {
     } else if (aiType == 2) {
-    } else if (aiType == 3) {
       acceleration.x = random(15);
       acceleration.y = random(15);
     } else {
@@ -61,7 +64,8 @@ class Ball {
     }
   }
   
-  PVector findNearestBall() {
+  PVector setNearestBall(PVector nearestBallInput) {
+    nearestBall = nearestBallInput;
     // finds nearest ball and returns pvector of its coordinates
   }
   
