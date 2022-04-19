@@ -21,10 +21,11 @@ void setup() {
   for (int i=0; i < startBallNumber; i++) {
     int randomX = 10*(int(random(-500, 500))); // multiplied by 10 so they start at least 10 apart
     int randomY = 10*(int(random(-500, 500)));
-    int randomAI = int(random(3));
+    int randomAI = 2;//int(random(3));
     computerBalls.add(new Ball(randomAI, randomX, randomY));
+    print(randomAI + " ");
   }
-  print(computerBalls);
+  //print(computerBalls);
 }
 
 void draw() {
@@ -42,6 +43,7 @@ void draw() {
       if ((computerBalls.get(i).position.dist(computerBalls.get(j).position) < distanceFromBall) || (i != j)) {
         nearestBall = computerBalls.get(j).position;
       }
+      //print(nearestBall);
       computerBalls.get(i).setNearestBall(nearestBall);   
     }
     
@@ -56,10 +58,14 @@ void draw() {
         computerBalls.get(i).getEaten();
       }
     }
-    //print("ball run:" + i);
+    //print(computerBalls.get(i).aiType);
     //run!!!!!
+    if (i == 2) {
+      print(computerBalls.get(i).speed);
+    }
     computerBalls.get(i).run();
   }
+  background(51);
 }
 
 PVector redrawMap(PVector location) {
