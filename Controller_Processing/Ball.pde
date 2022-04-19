@@ -7,6 +7,7 @@ class Ball {
   float k; // gravitational constant
   float maxAccel;
   float speedMag;
+  int counterSinceBeginning;
   
   
   
@@ -30,6 +31,8 @@ class Ball {
     k = 1;
     maxAccel = 2;
     speedMag = 2;
+    counterSinceBeginning = 0;
+    
     
   }
   
@@ -37,10 +40,11 @@ class Ball {
     if (visible) {
       changeSpeed();
       move();
-      accelerate();
+      //accelerate();
       drawSelf();
-      
+      println("running run");
     }
+    counterSinceBeginning++;
   }
   
   void drawSelf() {
@@ -48,6 +52,7 @@ class Ball {
     
     stroke(strokeColor);
     fill(ballColor);
+    print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
     circle(position.x, position.y, diameter);
   }
   
@@ -85,7 +90,9 @@ class Ball {
      // acceleration.x = - mimumum between (1/dist^2) and a certain value (2?)
       //acceleration.y = ;
     } else if (aiType == 2) {
-      PVector.fromAngle(random(0, 2*PI), speed);
+      if (counterSinceBeginning % 50 == 0) {
+        PVector.fromAngle(random(0, 2*PI), speed);
+      }
     } else {
       print("Invalid AI Type");
     }

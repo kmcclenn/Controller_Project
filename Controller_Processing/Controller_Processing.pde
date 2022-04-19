@@ -5,8 +5,9 @@ Serial controller_serial_port;
 
 int mapX = 10000;
 int mapY = 10000;
-PVector ballPosition = new PVector(400,400);
-int startBallNumber = 50;
+PVector ballPosition = new PVector(0,0);
+int startBallNumber = 1;
+int backgroundColor = 153;
 
 ArrayList<Ball> computerBalls = new ArrayList();// create array list with 50 balls or something
 
@@ -17,19 +18,30 @@ ArrayList<Ball> computerBalls = new ArrayList();// create array list with 50 bal
 
 void setup() {
   size(800,800);
-  background(51);
+  background(backgroundColor);
+  circle(400, 400, 10);
   for (int i=0; i < startBallNumber; i++) {
-    int randomX = 10*(int(random(-500, 500))); // multiplied by 10 so they start at least 10 apart
-    int randomY = 10*(int(random(-500, 500)));
-    int randomAI = 2;//int(random(3));
-    computerBalls.add(new Ball(randomAI, randomX, randomY));
-    print(randomAI + " ");
+    int randomX = 400;//10*(int(random(-500, 500))); // multiplied by 10 so they start at least 10 apart
+    int randomY = 400;//10*(int(random(-500, 500)));
+    int randomAI = int(random(3));
+    computerBalls.add(new Ball(2, randomX, randomY));
+    
   }
+  
+  // debug if:
+  int counter = 0;
+  for (int i=0; i < computerBalls.size(); i++) {
+    print("position " + computerBalls.get(i).position);
+    if (computerBalls.get(i).position.x < 500 && computerBalls.get(i).position.x > 0 && computerBalls.get(i).position.y < 500 && computerBalls.get(i).position.y > 0) {
+      counter++;
+    }
+  }
+  print("counter in frame: " + counter);
   //print(computerBalls);
 }
 
 void draw() {
-  
+  background(backgroundColor);
   Collections.sort(computerBalls, Comparator.comparingInt(Ball::getSize)); // step 1. see below
   
   // loops through balls to find the nearest one to each.
@@ -47,7 +59,7 @@ void draw() {
       computerBalls.get(i).setNearestBall(nearestBall);   
     }
     
-    // redraw map/coords chunk
+    // redraw map/coords chunk 
     computerBalls.get(i).position = redrawMap(computerBalls.get(i).position);
     
     //eat chunk 
@@ -60,12 +72,10 @@ void draw() {
     }
     //print(computerBalls.get(i).aiType);
     //run!!!!!
-    if (i == 2) {
-      print(computerBalls.get(i).speed);
-    }
     computerBalls.get(i).run();
   }
-  background(51);
+  println("draw method run");
+  
 }
 
 PVector redrawMap(PVector location) {
