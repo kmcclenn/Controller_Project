@@ -25,7 +25,7 @@ void setup() {
     int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
     int randomY = 10*(int(random(-mapY/20, mapY/20)));
     int randomAI = int(random(3));
-    computerBalls.add(new Ball(randomAI, randomX, randomY));
+    computerBalls.add(new Ball(1, randomX, randomY));
     
   }
   
@@ -59,14 +59,17 @@ void draw() {
     
     // set nearest ball chunk
     PVector nearestBall = new PVector(0,0);
-    float distanceFromBall = 10000; // set as high number to start
+    float distanceFromBall = 100000; // set as high number to start
     for (int j=0; j < computerBalls.size(); j++) {
-      if ((computerBalls.get(i).position.dist(computerBalls.get(j).position) < distanceFromBall) || (i != j)) {
+      if ((computerBalls.get(i).position.dist(computerBalls.get(j).position) < distanceFromBall) && (i != j)) {
         nearestBall = computerBalls.get(j).position;
+        distanceFromBall = computerBalls.get(i).position.dist(nearestBall);
+        //print("if ran");
       }
+      //println(distanceFromBall);
       //print(nearestBall);
-      computerBalls.get(i).setNearestBall(nearestBall);   
     }
+    computerBalls.get(i).setNearestBall(nearestBall);
     
     // redraw map/coords chunk 
     computerBalls.get(i).position = redrawMap(computerBalls.get(i).position);
@@ -76,18 +79,25 @@ void draw() {
       // if distance between centers is less than the difference between the radii
       
       if (ballInBall(computerBalls.get(j).position, computerBalls.get(i).position, computerBalls.get(j).diameter, computerBalls.get(i).diameter)) { 
-        computerBalls.get(j).eatBall(computerBalls.get(j).diameter);
+        if (computerBalls.get(i).active) {
+          computerBalls.get(j).eatBall(computerBalls.get(i).diameter);
+        }
         computerBalls.get(i).getEaten();
-        computerBalls.remove(i);
-        break ballLoop;
+        
+        continue ballLoop;
       }
     }
     
     //see if over any food!
+    foodLoop:
     for (int j=0; j < computerFoods.size(); j++) {
       if (ballInBall(computerBalls.get(i).position, computerFoods.get(j).position, computerBalls.get(i).diameter, computerFoods.get(j).diameter)) {
-        computerFoods.get(j).getEaten(); // maybe remove from array list too?
-        computerBalls.get(i).diameter += computerFoods.get(j).diameter;
+        if (computerFoods.get(j).active) {
+          computerBalls.get(i).diameter += computerFoods.get(j).diameter;
+        }
+        
+        computerFoods.get(j).getEaten();
+        continue foodLoop;// maybe remove from array list too?
       }
     
     }
@@ -100,8 +110,15 @@ void draw() {
     computerFoods.get(i).drawSelf();
   }
   
-  println("draw method run");
-  
+  //println("draw method run");
+  int missingFood = startFoodNumber - computerFoods.size();
+  for (int i=0; i < missingFood; i++) {
+    int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
+    int randomY = 10*(int(random(-mapY/20, mapY/20)));
+    computerFoods.add(new Food(randomX, randomY));
+  }
+  print(computerFoods.size());
+  print(computerBalls.get(2).nearestBall);
 }
 
 PVector redrawMap(PVector location) {

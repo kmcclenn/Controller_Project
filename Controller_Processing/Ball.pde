@@ -3,11 +3,12 @@ class Ball {
   color ballColor;
   color strokeColor;
   int aiType; // different function for ai
-  boolean visible;
+  boolean active;
   float k; // gravitational constant
   float maxAccel;
   float speedMag;
   int counterSinceBeginning;
+  int switchRate; // rate at which speed changes
   
   
   
@@ -27,7 +28,7 @@ class Ball {
     position = new PVector(_x, _y);
     speed = new PVector(sqrt(speedMag), sqrt(speedMag));
     acceleration = new PVector(0,0);
-    visible = true;
+    active = true;
     k = 1;
     maxAccel = 2;
     speedMag = 2;
@@ -35,15 +36,16 @@ class Ball {
     strokeColor = color(0,0,0);
     ballColor = color(random(255), random(255), random(255));
     diameter = 30;
+    switchRate = 50;
   }
   
   void run() {
-    if (visible) {
+    if (active) {
       changeSpeed();
       move();
       //accelerate();
       drawSelf();
-      println("running run");
+      //println("running run");
     }
     counterSinceBeginning++;
   }
@@ -53,7 +55,7 @@ class Ball {
     
     stroke(strokeColor);
     fill(ballColor);
-    print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
+    //print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
     circle(position.x, position.y, diameter);
   }
   
@@ -72,32 +74,34 @@ class Ball {
   }
   
   void changeSpeed() {
+    if (counterSinceBeginning % switchRate == 0) {
     
-    if (aiType == 0) {
-    } else if (aiType == 1) {
-      PVector.fromAngle(angleToPoint(nearestBall), speed);
-      
-      //acceleration.x = min(k/xdist squared, maxAccel);
-     //if (nearestBall.x > position.x) {
-     //  acceleration.x = abs(acceleration.x);
-     //} else if (nearestBall.x < position.x) {
-     //  acceleration.x = -1 * abs(acceleration.x);
-     //} else {
-     //  acceleration.x = 0;
-     //}
-     
-     // same with y
-     
-     // acceleration.x = - mimumum between (1/dist^2) and a certain value (2?)
-      //acceleration.y = ;
-    } else if (aiType == 2) {
-      if (counterSinceBeginning % 50 == 0) {
-        PVector.fromAngle(random(0, 2*PI), speed);
+      if (aiType == 0) {
+      } else if (aiType == 1) {
+        PVector.fromAngle(angleToPoint(nearestBall), speed);
+        
+        //acceleration.x = min(k/xdist squared, maxAccel);
+       //if (nearestBall.x > position.x) {
+       //  acceleration.x = abs(acceleration.x);
+       //} else if (nearestBall.x < position.x) {
+       //  acceleration.x = -1 * abs(acceleration.x);
+       //} else {
+       //  acceleration.x = 0;
+       //}
+       
+       // same with y
+       
+       // acceleration.x = - mimumum between (1/dist^2) and a certain value (2?)
+        //acceleration.y = ;
+      } else if (aiType == 2) {
+        
+         PVector.fromAngle(random(0, 2*PI), speed);
+        
+      } else {
+        print("Invalid AI Type");
       }
-    } else {
-      print("Invalid AI Type");
+      speed = speed.setMag(speedMag);
     }
-    speed = speed.setMag(speedMag);
   }
   
   float angleToPoint(PVector destination) {
@@ -125,7 +129,8 @@ class Ball {
   }
   
   void getEaten() {
-    visible = false;
+    
+    active = false;
   }
   
   int getSize() {
