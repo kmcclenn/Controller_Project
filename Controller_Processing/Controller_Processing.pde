@@ -19,7 +19,7 @@ ArrayList<Food> computerFoods = new ArrayList();
   //3. iterate through where they only check for balls bigger than them.
 
 void setup() {
-  size(800,800);
+  size(1200,00);
   background(backgroundColor);
   for (int i=0; i < startBallNumber; i++) {
     int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
