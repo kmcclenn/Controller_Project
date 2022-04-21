@@ -25,7 +25,7 @@ void setup() {
     int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
     int randomY = 10*(int(random(-mapY/20, mapY/20)));
     int randomAI = int(random(3));
-    computerBalls.add(new Ball(1, randomX, randomY));
+    computerBalls.add(new Ball(randomAI, randomX, randomY));
     
   }
   
@@ -51,6 +51,11 @@ void setup() {
 void draw() {
   background(backgroundColor);
   Collections.sort(computerBalls, Comparator.comparingInt(Ball::getSize)); // step 1. see below
+  
+  for (int i=0; i < computerFoods.size(); i++) {
+    computerFoods.get(i).drawSelf();
+    
+  }
   
   // loops through balls to find the nearest one to each.
   ballLoop:
@@ -83,7 +88,7 @@ void draw() {
           computerBalls.get(j).eatBall(computerBalls.get(i).diameter);
         }
         computerBalls.get(i).getEaten();
-        
+        //println(computerBalls.get(j).speedMag);
         continue ballLoop;
       }
     }
@@ -106,9 +111,7 @@ void draw() {
     //run!!!!!
     computerBalls.get(i).run();
   }
-  for (int i=0; i < computerFoods.size(); i++) {
-    computerFoods.get(i).drawSelf();
-  }
+  
   
   //println("draw method run");
   int missingFood = startFoodNumber - computerFoods.size();
@@ -117,8 +120,8 @@ void draw() {
     int randomY = 10*(int(random(-mapY/20, mapY/20)));
     computerFoods.add(new Food(randomX, randomY));
   }
-  print(computerFoods.size());
-  print(computerBalls.get(2).nearestBall);
+  //print(computerFoods.size());
+  
 }
 
 PVector redrawMap(PVector location) {

@@ -9,6 +9,7 @@ class Ball {
   float speedMag;
   int counterSinceBeginning;
   int switchRate; // rate at which speed changes
+  float speedCons; // constant for inverse prop relationship between speed and dist: speedMag = speedCons/diameter
   
   
   
@@ -37,11 +38,13 @@ class Ball {
     ballColor = color(random(255), random(255), random(255));
     diameter = 30;
     switchRate = 50;
+    speedCons = 60;
   }
   
   void run() {
     if (active) {
-      changeSpeed();
+      changeSpeedMag();
+      changeSpeedDirec();
       move();
       //accelerate();
       drawSelf();
@@ -73,7 +76,12 @@ class Ball {
     
   }
   
-  void changeSpeed() {
+  void changeSpeedMag() {
+    speedMag = max(speedCons/diameter, 0.5); // bigger goes slower! // needs work. but good for now.
+  }
+  
+  void changeSpeedDirec() {
+    // AI might be better if all of them have the functionality that if nearest ball is bigger - go away. if nearest ballis smaller go towards. maybe change later?
     if (counterSinceBeginning % switchRate == 0) {
     
       if (aiType == 0) {
