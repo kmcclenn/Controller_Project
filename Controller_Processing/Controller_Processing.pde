@@ -53,6 +53,7 @@ void draw() {
   Collections.sort(computerBalls, Comparator.comparingInt(Ball::getSize)); // step 1. see below
   
   // loops through balls to find the nearest one to each.
+  ballLoop:
   for (int i = 0; i < computerBalls.size(); i++) {
     
     
@@ -73,15 +74,32 @@ void draw() {
     //eat chunk 
     for (int j=i+1; j < computerBalls.size(); j++) { // step 2. only loops through balls bigger
       // if distance between centers is less than the difference between the radii
-      if (computerBalls.get(i).position.dist(computerBalls.get(j).position) < (0.5*(computerBalls.get(j).diameter - computerBalls.get(i).diameter))) { 
+      
+      if (ballInBall(computerBalls.get(j).position, computerBalls.get(i).position, computerBalls.get(j).diameter, computerBalls.get(i).diameter)) { 
         computerBalls.get(j).eatBall(computerBalls.get(j).diameter);
         computerBalls.get(i).getEaten();
+        computerBalls.remove(i);
+        break ballLoop;
       }
     }
-    //print(computerBalls.get(i).aiType);
+    
+    //see if over any food!
+    for (int j=0; j < computerFoods.size(); j++) {
+      if (ballInBall(computerBalls.get(i).position, computerFoods.get(j).position, computerBalls.get(i).diameter, computerFoods.get(j).diameter)) {
+        computerFoods.get(j).getEaten(); // maybe remove from array list too?
+        computerBalls.get(i).diameter += computerFoods.get(j).diameter;
+      }
+    
+    }
+    
+    
     //run!!!!!
     computerBalls.get(i).run();
   }
+  for (int i=0; i < computerFoods.size(); i++) {
+    computerFoods.get(i).drawSelf();
+  }
+  
   println("draw method run");
   
 }
@@ -92,4 +110,12 @@ PVector redrawMap(PVector location) {
   location.y = location.y - ballPosition.y;
   
   return location;
+}
+
+boolean ballInBall(PVector ball1, PVector ball2, int ball1Diam, int ball2Diam) {
+  //ball1 must be larger than ball2
+  float ballDist = ball1.dist(ball2);
+  float radiiDiff = 0.5*(ball1Diam - ball2Diam);
+  boolean test = (ballDist < radiiDiff);
+  return test;
 }

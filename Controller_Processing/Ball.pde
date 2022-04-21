@@ -120,6 +120,7 @@ class Ball {
   }
   
   void eatBall(int size) {
+    
     diameter += size;
   }
   
