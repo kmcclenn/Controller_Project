@@ -1,7 +1,7 @@
 class Ball {
-  int diameter = 30;
-  color ballColor = color(random(255), random(255), random(255));
-  color strokeColor = color(0,0,0);
+  int diameter;
+  color ballColor;
+  color strokeColor;
   int aiType; // different function for ai
   boolean visible;
   float k; // gravitational constant
@@ -32,8 +32,9 @@ class Ball {
     maxAccel = 2;
     speedMag = 2;
     counterSinceBeginning = 0;
-    
-    
+    strokeColor = color(0,0,0);
+    ballColor = color(random(255), random(255), random(255));
+    diameter = 30;
   }
   
   void run() {
@@ -61,7 +62,7 @@ class Ball {
   }
   
   void accelerate() {
-    int maxWidth = 5000 - diameter;
+    int maxWidth = mapX/2 - diameter;
     if (position.x > maxWidth || position.x < -maxWidth || position.y > maxWidth || position.y < -maxWidth) {
       speed.add(acceleration.mult(-1));
     } else {

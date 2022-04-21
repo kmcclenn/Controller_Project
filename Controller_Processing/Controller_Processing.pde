@@ -3,13 +3,15 @@ import java.util.Collections;
 import java.util.Comparator;
 Serial controller_serial_port;
 
-int mapX = 10000;
-int mapY = 10000;
+int mapX = 2000;
+int mapY = 2000;
 PVector ballPosition = new PVector(0,0);
-int startBallNumber = 1;
+int startBallNumber = 75;
 int backgroundColor = 153;
+int startFoodNumber = 200;
 
 ArrayList<Ball> computerBalls = new ArrayList();// create array list with 50 balls or something
+ArrayList<Food> computerFoods = new ArrayList();
 
 // METHOD FOR EATING //
   // 1. order balls by size.
@@ -19,12 +21,18 @@ ArrayList<Ball> computerBalls = new ArrayList();// create array list with 50 bal
 void setup() {
   size(800,800);
   background(backgroundColor);
-  circle(400, 400, 10);
   for (int i=0; i < startBallNumber; i++) {
-    int randomX = 400;//10*(int(random(-500, 500))); // multiplied by 10 so they start at least 10 apart
-    int randomY = 400;//10*(int(random(-500, 500)));
+    int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
+    int randomY = 10*(int(random(-mapY/20, mapY/20)));
     int randomAI = int(random(3));
-    computerBalls.add(new Ball(2, randomX, randomY));
+    computerBalls.add(new Ball(randomAI, randomX, randomY));
+    
+  }
+  
+  for (int i=0; i < startFoodNumber; i++) {
+    int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
+    int randomY = 10*(int(random(-mapY/20, mapY/20)));
+    computerFoods.add(new Food(randomX, randomY));
     
   }
   
