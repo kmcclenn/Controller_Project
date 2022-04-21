@@ -12,6 +12,7 @@ int startFoodNumber = 200;
 
 ArrayList<Ball> computerBalls = new ArrayList();// create array list with 50 balls or something
 ArrayList<Food> computerFoods = new ArrayList();
+Player player;
 
 // METHOD FOR EATING //
   // 1. order balls by size.
@@ -19,7 +20,9 @@ ArrayList<Food> computerFoods = new ArrayList();
   //3. iterate through where they only check for balls bigger than them.
 
 void setup() {
-  size(1200,00);
+  
+  size(800,800);
+  player = new Player(width/2, height/2);
   background(backgroundColor);
   for (int i=0; i < startBallNumber; i++) {
     int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
@@ -49,8 +52,17 @@ void setup() {
 }
 
 void draw() {
+  
+  
   background(backgroundColor);
+  player.run();
+  //println(player.position);
+  player.position.x = mouseX; // for now.
+  player.position.y = mouseY;
   Collections.sort(computerBalls, Comparator.comparingInt(Ball::getSize)); // step 1. see below
+  
+  
+  
   
   for (int i=0; i < computerFoods.size(); i++) {
     computerFoods.get(i).drawSelf();
@@ -93,16 +105,43 @@ void draw() {
       }
     }
     
+    // player chunk
+    // 1. if player in ball.
+    if (ballInBall(computerBalls.get(i).position, player.position, computerBalls.get(i).diameter, player.diameter)) {
+      if (player.active) {
+        computerBalls.get(i).eatBall(player.diameter);
+      }
+      player.getEaten();
+      // GAME OVER
+    } else if (ballInBall(player.position, computerBalls.get(i).position, player.diameter, computerBalls.get(i).diameter)) { // 2. ball in player
+      if (computerBalls.get(i).active) {
+        player.eatBall(computerBalls.get(i).diameter);
+      }
+      computerBalls.get(i).getEaten();
+      continue ballLoop;
+    }
+    
     //see if over any food!
     foodLoop:
     for (int j=0; j < computerFoods.size(); j++) {
+      
+      // AI balls eating food
       if (ballInBall(computerBalls.get(i).position, computerFoods.get(j).position, computerBalls.get(i).diameter, computerFoods.get(j).diameter)) {
         if (computerFoods.get(j).active) {
-          computerBalls.get(i).diameter += computerFoods.get(j).diameter;
+          computerBalls.get(i).eatBall(computerFoods.get(j).diameter);
         }
         
         computerFoods.get(j).getEaten();
         continue foodLoop;// maybe remove from array list too?
+      }
+      
+      // player ball eating food
+      if (ballInBall(player.position, computerFoods.get(j).position, player.diameter, computerFoods.get(j).diameter)) {
+        if (computerFoods.get(j).active) {
+          player.eatBall(computerFoods.get(j).diameter);
+        }
+        computerFoods.get(j).getEaten();
+        continue foodLoop;
       }
     
     }

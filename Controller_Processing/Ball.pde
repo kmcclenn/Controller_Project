@@ -1,4 +1,4 @@
-class Ball extends Player{
+class Ball extends Player {
   
   int aiType; // different function for ai
  
@@ -30,11 +30,6 @@ class Ball extends Player{
     }
     
   }
-  
-  
-  
-  
-  
   
   
   void changeSpeedMag() {

@@ -51,18 +51,28 @@ class Player {// make class player - then ball extends player
   }
   
   void move() {
-    position.add(speed);
+    if ((position.x > mapX/2 || position.x < -mapX/2) && (position.y > mapY/2 || position.y < -mapY/2)) {
+      position.add(speed.mult(-1));
+    } else if (position.x > mapX/2 || position.x < -mapX/2) {
+      position.x -= speed.x;
+      position.y += speed.y;
+    } else if (position.y > mapY/2 || position.y < -mapY/2) {
+      position.x += speed.x;
+      position.y -= speed.y;
+    } else {
+      position.add(speed);
+    }
   }
   
-  void accelerate() {
-    int maxWidth = mapX/2 - diameter;
-    if (position.x > maxWidth || position.x < -maxWidth || position.y > maxWidth || position.y < -maxWidth) {
-      speed.add(acceleration.mult(-1));
-    } else {
-      speed.add(acceleration);
-    }
+  //void accelerate() {
+  //  int maxWidth = mapX/2 - diameter;
     
-  }
+  //    speed.add(acceleration.mult(-1));
+  //  } else {
+  //    speed.add(acceleration);
+  //  }
+    
+  //}
   
   
   
