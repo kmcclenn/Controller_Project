@@ -12,8 +12,8 @@ class Ball extends Player {
   // 1. Goes towards nearest ball.
   // 2. Goes in random direction.
   ////////////
-  PVector nearestBall; // position of
-  PVector userBall; // position of
+  Ball nearestBall; 
+  Player userBall; 
   
   Ball(int _aiType, float _x, float _y) {
     super(_x, _y);
@@ -39,7 +39,7 @@ class Ball extends Player {
     stroke(strokeColor);
     fill(ballColor);
     //print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
-    if ((abs(position.x - userBall.x) < (width/2 + diameter/2)) && (abs(position.y - userBall.y) < (height/2 + diameter/2))) {
+    if ((abs(position.x - userBall.position.x) < (width/2 + diameter/2)) && (abs(position.y - userBall.position.y) < (height/2 + diameter/2))) {
       circle(mappedPosition.x, mappedPosition.y, diameter);
     }
     
@@ -54,10 +54,17 @@ class Ball extends Player {
     if (counterSinceBeginning % switchRate == 0) {
     
       if (aiType == 0) {
-        PVector.fromAngle(angleToPoint(userBall), speed);
-      } else if (aiType == 1) {
-        PVector.fromAngle(angleToPoint(nearestBall), speed);
         
+        PVector.fromAngle(angleToPoint(userBall.position), speed);
+        if (diameter < userBall.diameter) {
+          speed.mult(-1);
+        }
+      } else if (aiType == 1) {
+        
+        PVector.fromAngle(angleToPoint(nearestBall.position), speed);
+        if (diameter < nearestBall.diameter) {
+          speed.mult(-1);
+        }
         //acceleration.x = min(k/xdist squared, maxAccel);
        //if (nearestBall.x > position.x) {
        //  acceleration.x = abs(acceleration.x);
@@ -91,15 +98,15 @@ class Ball extends Player {
     return angle;
   }
   
-  void setNearestBall(PVector nearestBallInput) {
+  void setNearestBall(Ball nearestBallInput) {
     nearestBall = nearestBallInput;
     //print(nearestBall);
     // finds nearest ball and returns pvector of its coordinates
   }
   
-  void setUserBall(PVector userBallPos) {
+  void setUserBall(Player userBallInp) {
     // finds the player's ball and returns pvector of its coordinates.
-    userBall = userBallPos;
+    userBall = userBallInp;
   }
   
   int getSize() {
