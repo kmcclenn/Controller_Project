@@ -21,6 +21,7 @@ ArrayList<Food> computerFoods = new ArrayList();
 Player player;
 
 void setup() {
+  find_and_connect_to_usb_controller("usbserial");
   f = createFont("Arial",16,true);
   size(800,800);
   player = new Player(width/2, height/2);
@@ -38,6 +39,29 @@ void setup() {
     int randomY = 10*(int(random(-mapY/20, mapY/20)));
     computerFoods.add(new Food(randomX, randomY));
   }
+  controller_serial_port.clear();
+}
+
+void find_and_connect_to_usb_controller(String controller_serial_name) {
+  int serial_port = -1;
+  // Loop through all available usb devices
+  for (int i = 0; i < Serial.list().length; i++) {
+    // If the desired name is present then store the port number and stop looking
+    if (Serial.list()[i].indexOf(controller_serial_name) >= 0) {
+      serial_port = i;
+      break;
+    }
+  }
+  // If the named device is found then establish a connection
+  if (serial_port >= 0) {
+    controller_serial_port = new Serial(this, Serial.list()[serial_port], 9600);
+  }
+  // If the named device is not found then print an error message to console and exit the program
+  else {
+    println("Unable to find device named " + controller_serial_name + " in this list of available devices. Check the name of your device in the list below and adjust the code in the [setup] method.");
+    printArray(Serial.list());
+    exit();
+  }
 }
 
 void draw() {
@@ -53,7 +77,7 @@ void run() {
   if (player.diameter > width) {
     // YOU WIN!!!!!!!!!!
     playing = false;
-    endScreen("You win! Press space to play again.");
+    endScreen("You win!!!");
   }
   
   // corner locations
@@ -134,7 +158,7 @@ void run() {
       
       // end.
       playing = false;
-      endScreen("You lose... Press space to play again.");
+      endScreen("You lose...");
       break ballLoop;
       
     } else if (ballInBall(player.position, computerBalls.get(i).position, player.diameter, computerBalls.get(i).diameter)) { // 2. ball in player
@@ -194,6 +218,8 @@ void endScreen(String message) {
   background(backgroundColor);
   textFont(f,30);
   text(message,30,height/2);
+  delay(5000);
+  exit();
 }
 
 PVector redrawMap(PVector origPosition) {
@@ -239,4 +265,45 @@ void keyReleased() {
   player.speed.x = 0;
   player.speed.y = 0;
   
+}
+
+// Listener method that triggers when a serial event occurs
+void serialEvent(Serial port) {
+  // Grab any incoming controller data and send it off to be processed
+  handle_control_data(port.readStringUntil(']'));
+}
+
+// Check for a data stream that is incomplete or out of order
+// This is most likely to occur when the program first starts and picks up data mid-transmission
+String scrub_data(String data) {
+  if (data == null) return "";
+  // Look for data that is in the format "[a,b,c,]"
+  int opening_brace_index = data.lastIndexOf("[");
+  int closing_brace_index = data.lastIndexOf("]");
+  // If either brace is missing or out of order then abort by returning an empty string
+  if (opening_brace_index < 0 || closing_brace_index < 0 || opening_brace_index > closing_brace_index) return "";
+  // Only return the LAST data in that is in proper braces. In case 2 data sets are present we want to use only the newest set.
+  return data.substring(opening_brace_index+1, closing_brace_index);
+}
+
+// Parse the data stream and use the values as needed
+void handle_control_data(String data) {
+  String scrubbed_data = scrub_data(data);
+  // Ideally the processing code will run much faster than data is streaming in via usb
+  // So we will only take action when data is available
+  int data_index = 0;
+  String data_string = "";
+  int data_value = 0;
+  while (scrubbed_data.length() > 1 && data_index < scrubbed_data.length()) {
+    try {
+      data_string = scrubbed_data.substring(0, scrubbed_data.indexOf(","));
+      scrubbed_data = scrubbed_data.substring(scrubbed_data.indexOf(",")+1, scrubbed_data.length());
+      data_value = Integer.parseInt(data_string);
+    }
+    catch (NumberFormatException ex) {
+      println("WARNING: Bad Data - data is expected to be a number. Non-number data has been ignored.");
+    }
+    
+    data_index++;
+  }
 }
