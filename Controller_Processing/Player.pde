@@ -38,19 +38,20 @@ class Player {// make class player - then ball extends player
       
       move();
       //accelerate();
-      drawSelf(width/2, height/2);
+      drawSelf();
       //println("running run");
     }
     counterSinceBeginning++;
   }
   
-  void drawSelf(float xpos, float ypos) {
+  void drawSelf() {
     //background(51);
     
     stroke(strokeColor);
     fill(ballColor);
     //print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
-    circle(xpos, ypos, diameter);
+    
+    circle(width/2, height/2, diameter);
     
     
   }

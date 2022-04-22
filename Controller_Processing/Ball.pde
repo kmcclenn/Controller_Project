@@ -13,7 +13,7 @@ class Ball extends Player {
   // 2. Goes in random direction.
   ////////////
   PVector nearestBall; // position of
-
+  PVector userBall; // position of
   
   Ball(int _aiType, float _x, float _y) {
     super(_x, _y);
@@ -27,13 +27,23 @@ class Ball extends Player {
   void run() {
     if (active) {
       move();
-      drawSelf(mappedPosition.x, mappedPosition.y);
+      drawSelf();
       changeSpeedMag();
       changeSpeedDirec();
     }
     counterSinceBeginning++;
   }
   
+  @Override
+  void drawSelf() {
+    stroke(strokeColor);
+    fill(ballColor);
+    //print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
+    if ((abs(position.x - userBall.x) < (width/2 + diameter/2)) && (abs(position.y - userBall.y) < (height/2 + diameter/2))) {
+      circle(mappedPosition.x, mappedPosition.y, diameter);
+    }
+    
+  }
   
   void changeSpeedMag() {
     speedMag = max(speedCons/diameter, 0.5); // bigger goes slower! // needs work. but good for now.
@@ -44,6 +54,7 @@ class Ball extends Player {
     if (counterSinceBeginning % switchRate == 0) {
     
       if (aiType == 0) {
+        PVector.fromAngle(angleToPoint(userBall), speed);
       } else if (aiType == 1) {
         PVector.fromAngle(angleToPoint(nearestBall), speed);
         
@@ -86,8 +97,9 @@ class Ball extends Player {
     // finds nearest ball and returns pvector of its coordinates
   }
   
-  void findUserBall() {
+  void setUserBall(PVector userBallPos) {
     // finds the player's ball and returns pvector of its coordinates.
+    userBall = userBallPos;
   }
   
   int getSize() {

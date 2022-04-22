@@ -3,6 +3,9 @@ import java.util.Collections;
 import java.util.Comparator;
 Serial controller_serial_port;
 
+
+// set AI 0
+
 int mapX = 6000;
 int mapY = 6000;
 PVector ballPosition = new PVector(0,0);
@@ -102,7 +105,11 @@ void draw() {
       //println(distanceFromBall);
       //print(nearestBall);
     }
+    nearestBall = (computerBalls.get(i).position.dist(player.position) < distanceFromBall) ? player.position : nearestBall;
     computerBalls.get(i).setNearestBall(nearestBall);
+    
+    // set user ball chunk.
+    computerBalls.get(i).setUserBall(player.position);
     
     // redraw map/coords chunk
     computerBalls.get(i).mappedPosition = redrawMap(computerBalls.get(i).position);
