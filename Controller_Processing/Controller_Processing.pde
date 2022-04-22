@@ -3,8 +3,8 @@ import java.util.Collections;
 import java.util.Comparator;
 Serial controller_serial_port;
 
-int mapX = 10000;
-int mapY = 10000;
+int mapX = 6000;
+int mapY = 6000;
 PVector ballPosition = new PVector(0,0);
 int startBallNumber = 75;
 int backgroundColor = 153;
@@ -54,10 +54,10 @@ void setup() {
 void draw() {
 
   //not sure if these are correct
-  PVector topRight = new PVector(mapX/2 - player.position.x + width/2, mapY/2 - player.position.y + height/2);
-  PVector bottomRight = new PVector(mapX/2 - player.position.x + width/2, -mapY/2 - player.position.y + height/2);
-  PVector topLeft = new PVector(-mapX/2 - player.position.x + width/2, mapY/2 - player.position.y + height/2);
-  PVector bottomLeft = new PVector(-mapX/2 - player.position.x + width/2, -mapY/2 - player.position.y + height/2);
+  PVector bottomRight = new PVector(mapX/2 - player.position.x + width/2, mapY/2 - player.position.y + height/2);
+  PVector topRight = new PVector(mapX/2 - player.position.x + width/2, -mapY/2 - player.position.y + height/2);
+  PVector bottomLeft = new PVector(-mapX/2 - player.position.x + width/2, mapY/2 - player.position.y + height/2);
+  PVector topLeft = new PVector(-mapX/2 - player.position.x + width/2, -mapY/2 - player.position.y + height/2);
   
   //println(topLeft);
  
@@ -209,6 +209,12 @@ void keyPressed() {
     } else if (keyCode == RIGHT) {
       player.speed.x = player.speedMag;
       player.speed.y = 0;
+    } else if (keyCode == DOWN) {
+      player.speed.x = 0;
+      player.speed.y = player.speedMag;
+    } else if (keyCode == UP) {
+      player.speed.x = 0;
+      player.speed.y = -player.speedMag;
     }
   }
 }

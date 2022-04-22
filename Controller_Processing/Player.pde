@@ -56,8 +56,20 @@ class Player {// make class player - then ball extends player
   }
   
   void move() {
-    position.add(speed); // position of where it would be if background wasn't shifting - for reference
-    mappedPosition.add(speed); // actual position
+    if (position.x + diameter/2 < mapX/2 && position.x - diameter/2 > -mapX/2 && position.y + diameter/2 < mapY/2 && position.y - diameter/2 > -mapY/2) {
+      position.add(speed); // position of where it would be if background wasn't shifting - for reference
+      mappedPosition.add(speed); // actual position
+    }
+    
+    if (position.x + diameter/2 >= mapX/2) {
+      position.x -= diameter/2;
+    } else if (position.x - diameter/2 <= -mapX/2) {
+      position.x += diameter/2;
+    } else if (position.y + diameter/2 >= mapY/2) {
+      position.y -= diameter/2;
+    } else if (position.y - diameter/2 <= -mapY/2) {
+      position.y += diameter/2;
+    }
     //if ((position.x > mapX/2 || position.x < -mapX/2) && (position.y > mapY/2 || position.y < -mapY/2)) {
     //  position.add(speed.mult(-1));
     //} else if (position.x > mapX/2 || position.x < -mapX/2) {
