@@ -2,11 +2,13 @@ class Food {
   int weight;
   color foodColor;
   PVector position;
+  PVector mappedPosition;
   int diameter;
   boolean active;
   
   Food(float _x, float _y) {
     position = new PVector(_x, _y);
+    mappedPosition = position;
     foodColor = color(random(255), random(255), random(255));
     weight = 1;
     diameter = 10;
@@ -16,7 +18,7 @@ class Food {
   void drawSelf() {
     if (active) {
       fill(foodColor);
-      circle(position.x, position.y, diameter);
+      circle(mappedPosition.x, mappedPosition.y, diameter);
     }
   }
   

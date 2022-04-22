@@ -13,22 +13,25 @@ class Ball extends Player {
   // 2. Goes in random direction.
   ////////////
   PVector nearestBall; // position of
+
   
   Ball(int _aiType, float _x, float _y) {
     super(_x, _y);
     aiType = _aiType;
     k = 1;
     
+    
   }
   
   @Override
   void run() {
-    super.run();
     if (active) {
+      move();
+      drawSelf(mappedPosition.x, mappedPosition.y);
       changeSpeedMag();
       changeSpeedDirec();
     }
-    
+    counterSinceBeginning++;
   }
   
   

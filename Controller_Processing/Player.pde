@@ -1,9 +1,10 @@
 class Player {// make class player - then ball extends player 
+
   int diameter;
   color ballColor;
   color strokeColor;
   boolean active;
-  
+ 
   float maxAccel;
   float speedMag;
   int counterSinceBeginning;
@@ -12,8 +13,9 @@ class Player {// make class player - then ball extends player
   PVector position;
   PVector speed;
   PVector acceleration;
+  PVector mappedPosition; // the actual position the the ball is in - not the position relative to the start and assuming that the player is ACTUALLY moving
   
-  
+
   Player(float _x, float _y) {
     
     position = new PVector(_x, _y);
@@ -28,42 +30,47 @@ class Player {// make class player - then ball extends player
     diameter = 30;
     switchRate = 50;
     speedCons = 60;
+    mappedPosition = position;
   }
-  
+ 
   void run() {
     if (active) {
       
       move();
       //accelerate();
-      drawSelf();
+      drawSelf(width/2, height/2);
       //println("running run");
     }
     counterSinceBeginning++;
   }
   
-  void drawSelf() {
+  void drawSelf(float xpos, float ypos) {
     //background(51);
     
     stroke(strokeColor);
     fill(ballColor);
     //print("drawing circle. xpos: " + position.x + ", ypos: " + position.y + ", diameter: " + diameter);
-    circle(position.x, position.y, diameter);
+    circle(xpos, ypos, diameter);
+    
+    
   }
   
   void move() {
-    if ((position.x > mapX/2 || position.x < -mapX/2) && (position.y > mapY/2 || position.y < -mapY/2)) {
-      position.add(speed.mult(-1));
-    } else if (position.x > mapX/2 || position.x < -mapX/2) {
-      position.x -= speed.x;
-      position.y += speed.y;
-    } else if (position.y > mapY/2 || position.y < -mapY/2) {
-      position.x += speed.x;
-      position.y -= speed.y;
-    } else {
-      position.add(speed);
-    }
+    position.add(speed); // position of where it would be if background wasn't shifting - for reference
+    mappedPosition.add(speed); // actual position
+    //if ((position.x > mapX/2 || position.x < -mapX/2) && (position.y > mapY/2 || position.y < -mapY/2)) {
+    //  position.add(speed.mult(-1));
+    //} else if (position.x > mapX/2 || position.x < -mapX/2) {
+    //  position.x -= speed.x;
+    //  position.y += speed.y;
+    //} else if (position.y > mapY/2 || position.y < -mapY/2) {
+    //  position.x += speed.x;
+    //  position.y -= speed.y;
+    //} else {
+    //  position.add(speed);
+    //}
   }
-  
+ 
   //void accelerate() {
   //  int maxWidth = mapX/2 - diameter;
     
@@ -72,7 +79,7 @@ class Player {// make class player - then ball extends player
   //    speed.add(acceleration);
   //  }
     
-  //}
+  //
   
   
   
@@ -86,6 +93,5 @@ class Player {// make class player - then ball extends player
     
     active = false;
   }
-  
   
 }
