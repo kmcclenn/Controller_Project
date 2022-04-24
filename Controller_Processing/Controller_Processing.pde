@@ -271,6 +271,7 @@ void keyReleased() {
 void serialEvent(Serial port) {
   // Grab any incoming controller data and send it off to be processed
   handle_control_data(port.readStringUntil(']'));
+  player.speed = player.speed.setMag(player.speedMag);
 }
 
 // Check for a data stream that is incomplete or out of order
@@ -302,6 +303,19 @@ void handle_control_data(String data) {
     }
     catch (NumberFormatException ex) {
       println("WARNING: Bad Data - data is expected to be a number. Non-number data has been ignored.");
+    }
+    if (data_index == 0) {
+      // horizontal pin
+      player.speed.x = data_value;
+    } else if (data_index == 1) {
+      // vertical_pin
+      player.speed.y = -data_value; // negative because y axes are flipped here. - i think
+    } else if (data_index == 2) {
+      // button
+      if (data_value == 1) playing = true;
+    } else if (data_index == 3) {
+      // distance
+      // maybe w RGB - to make it easy. if not then figure it out.
     }
     
     data_index++;

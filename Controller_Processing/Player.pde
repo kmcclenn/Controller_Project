@@ -37,6 +37,7 @@ class Player {// make class player - then ball extends player
     if (active) {
       
       move();
+      changeSpeedMag();
       //accelerate();
       drawSelf();
       //println("running run");
@@ -54,6 +55,10 @@ class Player {// make class player - then ball extends player
     circle(width/2, height/2, diameter);
     
     
+  }
+  
+  void changeSpeedMag() {
+    speedMag = max(speedCons/diameter, 0.5); // bigger goes slower! // needs work. but good for now.
   }
   
   void move() {

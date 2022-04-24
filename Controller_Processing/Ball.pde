@@ -45,9 +45,7 @@ class Ball extends Player {
     
   }
   
-  void changeSpeedMag() {
-    speedMag = max(speedCons/diameter, 0.5); // bigger goes slower! // needs work. but good for now.
-  }
+  
   
   void changeSpeedDirec() {
     // AI might be better if all of them have the functionality that if nearest ball is bigger - go away. if nearest ballis smaller go towards. maybe 
