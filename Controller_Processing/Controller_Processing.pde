@@ -13,6 +13,8 @@ int startBallNumber = 200;
 int backgroundColor = 153;
 int startFoodNumber = 1500;
 boolean playing = false;
+String message = "";
+int timeSinceEnd = 0;
 
 PFont f;
 
@@ -21,7 +23,7 @@ ArrayList<Food> computerFoods = new ArrayList();
 Player player;
 
 void setup() {
-  find_and_connect_to_usb_controller("usbserial");
+  //find_and_connect_to_usb_controller("usbserial");
   f = createFont("Arial",16,true);
   size(800,800);
   player = new Player(width/2, height/2);
@@ -39,7 +41,7 @@ void setup() {
     int randomY = 10*(int(random(-mapY/20, mapY/20)));
     computerFoods.add(new Food(randomX, randomY));
   }
-  controller_serial_port.clear();
+  //controller_serial_port.clear();
 }
 
 void find_and_connect_to_usb_controller(String controller_serial_name) {
@@ -65,9 +67,20 @@ void find_and_connect_to_usb_controller(String controller_serial_name) {
 }
 
 void draw() {
-  println(playing);
+  //println(playing);
   if (playing) {
     run();
+  } else {
+    background(backgroundColor);
+    if (message != "") {
+      endScreen(message);
+      
+      
+    }
+    println(timeSinceEnd);
+    if (millis() - timeSinceEnd > 5000) {
+      exit();
+    }
   }
   
 }
@@ -77,7 +90,8 @@ void run() {
   if (player.diameter > width) {
     // YOU WIN!!!!!!!!!!
     playing = false;
-    endScreen("You win!!!");
+    message = "You win!!!";
+    timeSinceEnd = millis();
   }
   
   // corner locations
@@ -157,8 +171,12 @@ void run() {
       player.getEaten();
       
       // end.
+      
       playing = false;
-      endScreen("You lose...");
+      message = "You lose...";
+      timeSinceEnd = millis();
+      
+      //endScreen("You lose...");
       break ballLoop;
       
     } else if (ballInBall(player.position, computerBalls.get(i).position, player.diameter, computerBalls.get(i).diameter)) { // 2. ball in player
@@ -167,6 +185,16 @@ void run() {
       }
       computerBalls.get(i).getEaten();
       continue ballLoop;
+    }
+    
+    // see of other ball has won
+    if (computerBalls.get(i).diameter > width) {
+      
+      playing = false;
+      message = "You lose...";
+      timeSinceEnd = millis();
+      break ballLoop;
+      
     }
     
     //see if over any food!
@@ -215,11 +243,10 @@ void run() {
 }
 
 void endScreen(String message) {
-  background(backgroundColor);
+  
   textFont(f,30);
   text(message,30,height/2);
-  delay(5000);
-  exit();
+  
 }
 
 PVector redrawMap(PVector origPosition) {
