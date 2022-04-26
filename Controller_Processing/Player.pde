@@ -67,38 +67,22 @@ class Player {// make class player - then ball extends player
       mappedPosition.add(speed); // actual position
     }
     
+    float bumbBackFactor = 10;
     if (position.x + diameter/2 >= mapX/2) {
-      position.x -= diameter/2;
+      position.x -= bumbBackFactor;
+      mappedPosition.x -= bumbBackFactor;
     } else if (position.x - diameter/2 <= -mapX/2) {
-      position.x += diameter/2;
+      position.x += bumbBackFactor;
+      mappedPosition.x += bumbBackFactor;
     } else if (position.y + diameter/2 >= mapY/2) {
-      position.y -= diameter/2;
+      position.y -= bumbBackFactor;
+      mappedPosition.y -= bumbBackFactor;
     } else if (position.y - diameter/2 <= -mapY/2) {
-      position.y += diameter/2;
+      position.y += bumbBackFactor;
+      mappedPosition.y += bumbBackFactor;
     }
-    //if ((position.x > mapX/2 || position.x < -mapX/2) && (position.y > mapY/2 || position.y < -mapY/2)) {
-    //  position.add(speed.mult(-1));
-    //} else if (position.x > mapX/2 || position.x < -mapX/2) {
-    //  position.x -= speed.x;
-    //  position.y += speed.y;
-    //} else if (position.y > mapY/2 || position.y < -mapY/2) {
-    //  position.x += speed.x;
-    //  position.y -= speed.y;
-    //} else {
-    //  position.add(speed);
-    //}
+    
   }
- 
-  //void accelerate() {
-  //  int maxWidth = mapX/2 - diameter;
-    
-  //    speed.add(acceleration.mult(-1));
-  //  } else {
-  //    speed.add(acceleration);
-  //  }
-    
-  //
-  
   
   
   

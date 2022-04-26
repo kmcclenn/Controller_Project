@@ -69,8 +69,7 @@ void find_and_connect_to_usb_controller(String controller_serial_name) {
 }
 
 void draw() {
-  //println(playing);
-  //println(backgroundColor);
+  
   if (playing) {
     run();
   } else {
@@ -334,9 +333,7 @@ void handle_control_data(String data) {
     catch (NumberFormatException ex) {
       println("WARNING: Bad Data - data is expected to be a number. Non-number data has been ignored. Data is: " + data_value);
     }
-    if (data_index == 3) {
-      println("datavalue: " + data_value + ", dataindex: " + data_index);
-    }
+    
 
     if (data_index == 0) {
       float speedX = 512 - data_value;
