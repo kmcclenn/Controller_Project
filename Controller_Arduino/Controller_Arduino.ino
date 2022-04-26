@@ -44,6 +44,7 @@ void loop() {
 
  
  Serial.print(output_data);
+ //Serial.println(distance);
  
 }
 void add_data_to_output(int data){

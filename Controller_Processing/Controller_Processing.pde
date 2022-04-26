@@ -70,6 +70,7 @@ void find_and_connect_to_usb_controller(String controller_serial_name) {
 
 void draw() {
   //println(playing);
+  //println(backgroundColor);
   if (playing) {
     run();
   } else {
@@ -136,6 +137,7 @@ ballLoop:
       Ball playerBall = new Ball(0, player.position.x, player.position.y);
       playerBall.diameter = player.diameter;
       nearestBall = playerBall;
+      //println("playre is nearest");
     }
 
     computerBalls.get(i).setNearestBall(nearestBall);
@@ -189,7 +191,7 @@ ballLoop:
     if (computerBalls.get(i).diameter > width) {
 
       playing = false;
-      message = "You lose...";
+      message = "You lose... Another ball got too big.";
       timeSinceEnd = millis();
       break ballLoop;
     }
@@ -289,12 +291,12 @@ void keyReleased() {
 
 //Listener method that triggers when a serial event occurs
 void serialEvent(Serial port) {
-  
+
   // Grab any incoming controller data and send it off to be processed
   if (setupFinished) {
     handle_control_data(port.readStringUntil(']'));
   }
-  
+
   //player.speed = player.speed.setMag(player.speedMag);
 }
 
@@ -319,15 +321,23 @@ void handle_control_data(String data) {
   int data_index = 0;
   String data_string = "";
   int data_value = 0;
-  while (scrubbed_data.length() > 1 && data_index < scrubbed_data.length()) {
+  //println("scrubbeddata: " + scrubbed_data);
+  
+  int origLength = scrubbed_data.length();
+  while (scrubbed_data.length() > 1 && data_index < origLength) {
+
     try {
       data_string = scrubbed_data.substring(0, scrubbed_data.indexOf(","));
       scrubbed_data = scrubbed_data.substring(scrubbed_data.indexOf(",")+1, scrubbed_data.length());
       data_value = Integer.parseInt(data_string);
     }
     catch (NumberFormatException ex) {
-      println("WARNING: Bad Data - data is expected to be a number. Non-number data has been ignored.");
+      println("WARNING: Bad Data - data is expected to be a number. Non-number data has been ignored. Data is: " + data_value);
     }
+    if (data_index == 3) {
+      println("datavalue: " + data_value + ", dataindex: " + data_index);
+    }
+
     if (data_index == 0) {
       float speedX = 512 - data_value;
       speedX = (abs(speedX) < 20) ? 0 : speedX;
@@ -345,10 +355,17 @@ void handle_control_data(String data) {
     } else if (data_index == 3) {
       // distance
       // maybe w RGB - to make it easy. if not then figure it out.
+      //println(data_value);
+      backgroundColor = int(map(data_value, 0, 200, 0, 200));
+      //println(backgroundColor);
+      backgroundColor += 55;
+      backgroundColor = min(backgroundColor, 255);
+      backgroundColor = max(backgroundColor, 0);
+      //println(backgroundColor);
     }
 
     data_index++;
   }
-  println(player.speed);
+  //println(player.speed);
   player.speed = player.speed.setMag(player.speedMag);
 }
