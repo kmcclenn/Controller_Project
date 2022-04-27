@@ -3,9 +3,7 @@ import java.util.Collections;
 import java.util.Comparator;
 Serial controller_serial_port;
 
-
-// set AI 0
-
+// necessary variables
 int mapX = 6000;
 int mapY = 6000;
 PVector ballPosition = new PVector(0, 0);
@@ -23,6 +21,9 @@ ArrayList<Ball> computerBalls = new ArrayList();// create array list with 50 bal
 ArrayList<Food> computerFoods = new ArrayList();
 Player player;
 
+// runs at beginning
+// creates font, player, balls, and food
+// sets up serial connection
 void setup() {
   find_and_connect_to_usb_controller("usbserial");
   f = createFont("Arial", 16, true);
@@ -45,6 +46,7 @@ void setup() {
   setupFinished = true;
 }
 
+// seans function
 void find_and_connect_to_usb_controller(String controller_serial_name) {
   int serial_port = -1;
   // Loop through all available usb devices
@@ -68,24 +70,27 @@ void find_and_connect_to_usb_controller(String controller_serial_name) {
   }
 }
 
+// runs every frame
 void draw() {
-  
+  // run the game if the playing bool is true
   if (playing) {
     run();
   } else {
     background(backgroundColor);
     if (message != "") {
       endScreen(message);
-      if (millis() - timeSinceEnd > 5000) {
+      if (millis() - timeSinceEnd > 5000) { // if the game has ended, wait 5 seconds then quit
         exit();
       }
     }
-    //println(timeSinceEnd);
+   
   }
 }
 
+// run the game
 void run() {
-
+  
+  // if player is big enough, win
   if (player.diameter > width) {
     // YOU WIN!!!!!!!!!!
     playing = false;
@@ -100,22 +105,26 @@ void run() {
   PVector topLeft = new PVector(-mapX/2 - player.position.x + width/2, -mapY/2 - player.position.y + height/2);
 
 
-
+  // draw background and borders
   background(backgroundColor);
   line(topRight.x, topRight.y, bottomRight.x, bottomRight.y);
   line(bottomRight.x, bottomRight.y, bottomLeft.x, bottomLeft.y);
   line(bottomLeft.x, bottomLeft.y, topLeft.x, topLeft.y);
   line(topLeft.x, topLeft.y, topRight.x, topRight.y);
 
+  // run player
   player.run();
+  
+  // sort computerBalls by size
   Collections.sort(computerBalls, Comparator.comparingInt(Ball::getSize)); // step 1. see below
-
+  
+  // draw food and map them depending on player position
   for (int i=0; i < computerFoods.size(); i++) {
     computerFoods.get(i).drawSelf();
     computerFoods.get(i).mappedPosition = redrawMap(computerFoods.get(i).position); // keep original position original.
   }
 
-  // loops through balls to find the nearest one to each.
+  // loops through balls
 ballLoop:
   for (int i = 0; i < computerBalls.size(); i++) {
 
@@ -127,18 +136,13 @@ ballLoop:
       if ((computerBalls.get(i).position.dist(computerBalls.get(j).position) < distanceFromBall) && (i != j)) {
         nearestBall = computerBalls.get(j);
         distanceFromBall = computerBalls.get(i).position.dist(nearestBall.position);
-        //print("if ran");
       }
-      //println(distanceFromBall);
-      //print(nearestBall);
     }
     if (computerBalls.get(i).position.dist(player.position) < distanceFromBall) {
       Ball playerBall = new Ball(0, player.position.x, player.position.y);
       playerBall.diameter = player.diameter;
       nearestBall = playerBall;
-      //println("playre is nearest");
     }
-
     computerBalls.get(i).setNearestBall(nearestBall);
 
     // set user ball chunk.
@@ -147,9 +151,8 @@ ballLoop:
     // redraw map/coords chunk
     computerBalls.get(i).mappedPosition = redrawMap(computerBalls.get(i).position);
 
-
     //eat chunk
-    for (int j=i+1; j < computerBalls.size(); j++) { // step 2. only loops through balls bigger
+    for (int j=i+1; j < computerBalls.size(); j++) { // only loops through balls bigger
       // if distance between centers is less than the difference between the radii
 
       if (ballInBall(computerBalls.get(j).position, computerBalls.get(i).position, computerBalls.get(j).diameter, computerBalls.get(i).diameter)) {
@@ -157,28 +160,22 @@ ballLoop:
           computerBalls.get(j).eatBall(computerBalls.get(i).diameter);
         }
         computerBalls.get(i).getEaten();
-        //println(computerBalls.get(j).speedMag);
-        continue ballLoop;
+        continue ballLoop; // ball is eaten so skip the rest of its loop
       }
     }
 
     // player chunk
-    // 1. if player in ball.
+    // if player in ball.
     if (ballInBall(computerBalls.get(i).position, player.position, computerBalls.get(i).diameter, player.diameter)) {
       if (player.active) {
         computerBalls.get(i).eatBall(player.diameter);
       }
-      player.getEaten();
-
-      // end.
-
+      player.getEaten(); // end
       playing = false;
       message = "You lose...";
       timeSinceEnd = millis();
-
-      //endScreen("You lose...");
       break ballLoop;
-    } else if (ballInBall(player.position, computerBalls.get(i).position, player.diameter, computerBalls.get(i).diameter)) { // 2. ball in player
+    } else if (ballInBall(player.position, computerBalls.get(i).position, player.diameter, computerBalls.get(i).diameter)) { // if ball in player
       if (computerBalls.get(i).active) {
         player.eatBall(computerBalls.get(i).diameter);
       }
@@ -195,7 +192,7 @@ ballLoop:
       break ballLoop;
     }
 
-    //see if over any food!
+    //loop over all good
   foodLoop:
     for (int j=0; j < computerFoods.size(); j++) {
 
@@ -208,7 +205,7 @@ ballLoop:
         computerFoods.get(j).getEaten();
         computerFoods.remove(j);
 
-        continue foodLoop;// maybe remove from array list too?
+        continue foodLoop;
       }
 
       // player ball eating food
@@ -226,20 +223,17 @@ ballLoop:
     computerBalls.get(i).run();
   }
 
-
-  //println("draw method run");
+  // repopulate food if its eaten
   int missingFood = startFoodNumber - computerFoods.size();
   for (int i=0; i < missingFood; i++) {
     int randomX = 10*(int(random(-mapX/20, mapX/20))); // multiplied by 10 so they start at least 10 apart
     int randomY = 10*(int(random(-mapY/20, mapY/20)));
     computerFoods.add(new Food(randomX, randomY));
   }
-  //println(computerFoods.size());
-  //println(player.position);
 }
 
+// end screen with a given message
 void endScreen(String message) {
-
   textFont(f, 30);
   text(message, 30, height/2);
 }
@@ -249,10 +243,10 @@ PVector redrawMap(PVector origPosition) {
   PVector location = new PVector(0, 0);
   location.x = origPosition.x - player.position.x + width/2;
   location.y = origPosition.y - player.position.y + height/2;
-
   return location;
 }
 
+// if ball1 is in ball 2
 boolean ballInBall(PVector ball1, PVector ball2, int ball1Diam, int ball2Diam) {
   //ball1 must be larger than ball2
   float ballDist = ball1.dist(ball2);
